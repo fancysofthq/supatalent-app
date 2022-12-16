@@ -1,0 +1,14 @@
+node_modules
+dist
+dist-ssr
+*.local
+*.local.*
+artifacts
+cache
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+
+contracts/*.json
+contracts/types
