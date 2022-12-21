@@ -9,7 +9,7 @@ specifiers:
   '@ipld/dag-cbor': ^8.0.0
   '@ipld/dag-pb': ^3.0.1
   '@ipld/unixfs': ^2.0.0
-  '@nxsf/ipnft': ^0.4.0-rc4
+  '@nxsf/ipnft': ^0.4.0-rc5
   '@prettier/plugin-pug': ^2.3.0
   '@tailwindcss/forms': ^0.5.3
   '@tailwindcss/line-clamp': ^0.4.2
@@ -49,7 +49,7 @@ dependencies:
   '@ipld/dag-cbor': 8.0.0
   '@ipld/dag-pb': 3.0.1
   '@ipld/unixfs': 2.0.0
-  '@nxsf/ipnft': 0.4.0-rc4
+  '@nxsf/ipnft': 0.4.0-rc5
   '@vueuse/components': 9.6.0_vue@3.2.45
   '@vueuse/core': 9.6.0_vue@3.2.45
   buffer: 6.0.3
@@ -467,7 +467,7 @@ packages:
       '@ipld/unixfs': 2.0.0
       '@metamask/providers': 10.2.1
       '@multiformats/sha3': 2.0.14
-      '@nxsf/ipnft': 0.4.0-rc4
+      '@nxsf/ipnft': 0.4.0-rc5
       '@vueuse/core': 9.6.0_vue@3.2.45
       axios: 1.2.1
       blockstore-core: 2.0.2
@@ -626,19 +626,6 @@ packages:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.14.0
     dev: true
-
-  /@nxsf/ipnft/0.4.0-rc4:
-    resolution: {integrity: sha512-txgYdfAlkHfCB2R2bwDTnq9vELMSctd87+vAQwjBh8a9jDpnwrLlbrjcZqbVJ64DGBX6crl8lBVpanNTqz9BUw==, tarball: download/@nxsf/ipnft/0.4.0-rc4/b0b185ef4d70acde0a627066398ea283b19a8cf2}
-    engines: {node: ^18.0}
-    dependencies:
-      '@ethersproject/abi': 5.7.0
-      '@ethersproject/bytes': 5.7.0
-      '@ethersproject/providers': 5.7.2
-      '@openzeppelin/contracts': 4.8.0
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-    dev: false
 
   /@nxsf/ipnft/0.4.0-rc5:
     resolution: {integrity: sha512-Mkbq/XPq6BkHQySaX4NlzNTJv1gEQphV/U3nVM+QBg721CuvdnQ2ihO/hQRRKR46UvVb/hi13I5rT0wpLtCuSA==}
