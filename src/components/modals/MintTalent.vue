@@ -30,7 +30,7 @@ import Spinner from "@fancysofthq/supa-app/components/Spinner.vue";
 import * as api from "@/services/api";
 import { CID } from "multiformats/cid";
 import { date2InputDate } from "@fancysofthq/supa-app/utils/html";
-import { Config as ListingConfig } from "@fancysofthq/contracts/src/NFTFair/Listing";
+import { Config as ListingConfig } from "@fancysoft/contracts/src/NFTFair/Listing";
 
 const now = new Date();
 

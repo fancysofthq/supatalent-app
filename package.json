@@ -8,7 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@fancysofthq/contracts": "^0.1.0-rc1",
+    "@fancysoft/contracts": "^0.1.0-rc3",
     "@fancysofthq/supa-app": "^0.4.0-rc1",
     "@headlessui/vue": "^1.7.4",
     "@heroicons/vue": "^2.0.13",

@@ -8,7 +8,7 @@ import {
   NFTFair__factory,
   IPNFT1155Redeemable,
   IPNFT1155Redeemable__factory,
-} from "@fancysofthq/contracts/typechain";
+} from "@fancysoft/contracts/typechain";
 import { Address } from "@fancysofthq/supa-app/models/Bytes";
 import { ethers, BigNumberish, BytesLike } from "ethers";
 
