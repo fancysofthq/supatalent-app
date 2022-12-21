@@ -1,14 +1,16 @@
 <script setup lang="ts">
-import type { Account } from "@fancysofthq/supa-app/models/Account";
 import { XMarkIcon } from "@heroicons/vue/24/outline";
 import { XCircleIcon } from "@heroicons/vue/24/solid";
 import CommonVue from "./Common.vue";
-import { ethers, BigNumber } from "ethers";
+import { ethers } from "ethers";
 import { computed, type Ref, ref } from "vue";
 import { chain } from "@/services/eth";
 import { type Listing } from "@/services/api";
 import Spinner from "@fancysofthq/supa-app/components/Spinner.vue";
-import { openStoreContract } from "@/services/eth";
+import { nftFairContract } from "@/services/eth";
+import { useEth } from "@fancysofthq/supa-app/services/eth";
+
+const { account } = useEth();
 
 const props = defineProps<{
   open: boolean;
@@ -36,9 +38,10 @@ async function transact() {
   txInProgress.value = true;
 
   try {
-    const tx = await openStoreContract.value?.purchase(
-      props.listing!.id,
+    const tx = await nftFairContract.value?.purchase(
+      props.listing!.id.toString(),
       amount.value,
+      account.value!.address.value!.toString(),
       {
         value: sum.value,
       }

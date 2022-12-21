@@ -108,9 +108,9 @@ const emit = defineEmits(["visit", "clickRedeem"]);
           pfp-class="h-4 w-4 rounded-full bg-slate-100"
         )
 
-      template(v-if="talent.chaindata.value?.createdAt")
-        span &middot;
-        span created {{ formatDistance(talent.chaindata.value.createdAt, new Date(), { addSuffix: true }) }}
+      //- template(v-if="talent.chaindata.value?.createdAt")
+      //-   span &middot;
+      //-   span created {{ formatDistance(talent.chaindata.value.createdAt, new Date(), { addSuffix: true }) }}
 
       template(v-if="talent.chaindata.value?.editions")
         span &middot;

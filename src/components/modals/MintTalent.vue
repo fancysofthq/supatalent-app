@@ -17,24 +17,22 @@ import {
 } from "vue";
 import TagInput from "@fancysofthq/supa-app/components/TagInput.vue";
 import FilePicker from "@fancysofthq/supa-app/components/FilePicker.vue";
-import { app, talentContract, openStoreContract } from "@/services/eth";
+import { app, talentContract, nftFairContract } from "@/services/eth";
 import { BigNumber, ethers } from "ethers";
 import { Talent, type Metadata, type Chaindata } from "@/models/Talent";
 import TalentVue from "@/components/Talent.vue";
-import { packIpft } from "@fancysofthq/supa-app/services/Web3Storage";
-import * as IPFT from "@fancysofthq/supa-app/services/eth/IPFT";
+import { packIpnft } from "@fancysofthq/supa-app/services/Web3Storage";
+import { IPFT } from "@nxsf/ipnft";
 import { useEth } from "@fancysofthq/supa-app/services/eth";
-import { Address } from "@fancysofthq/supa-app/services/eth/Address";
+import { Address } from "@fancysofthq/supa-app/models/Bytes";
 import { indexOfMulti, Uint8 } from "@fancysofthq/supa-app/utils/uint8";
 import Spinner from "@fancysofthq/supa-app/components/Spinner.vue";
 import * as api from "@/services/api";
 import { CID } from "multiformats/cid";
 import { date2InputDate } from "@fancysofthq/supa-app/utils/html";
-import { addMonths } from "date-fns";
-import { ListingConfig } from "@/services/eth";
+import { Config as ListingConfig } from "@fancysofthq/contracts/src/NFTFair/Listing";
 
 const now = new Date();
-const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
 const props = defineProps<{ open: boolean; account: Account }>();
 const emit = defineEmits(["close", "disconnect"]);
@@ -129,11 +127,11 @@ const talentMetadata: ComputedRef<Metadata> = computed(() => ({
 }));
 
 const talentChaindata: ComputedRef<Chaindata> = computed(() => ({
-  createdAt: now,
+  // createdAt: now,
   royalty: new Uint8(royalty.value || 0).value / 255,
   finalized: finalize.value,
   expiredAt: expiresAt.value || now,
-  editions: editions.value || 0,
+  editions: BigNumber.from(editions.value || 0),
 }));
 
 const talent: ComputedRef<Talent> = computed(
@@ -161,22 +159,24 @@ async function mint() {
 
   const { provider } = useEth();
 
-  const tag = new IPFT.Tag(
+  const tag = new IPFT(
     (await provider.value!.getNetwork()).chainId,
-    new Address(talentContract.value!.address),
-    props.account.address.value!
+    new Address(talentContract.value!.address).toString(),
+    props.account.address.value!.toString()
   );
 
-  const blockstore = await packIpft(talent.value, tag);
+  const blockstore = await packIpnft(talent.value, tag);
   const cid = blockstore.rootCid;
   talentCid.value = cid;
   console.debug("Root CID", cid.toString());
 
   const currentAuthorOf = new Address(
-    await talentContract.value.authorOf(BigNumber.from(cid.multihash.digest))
+    await talentContract.value.contentAuthorOf(
+      BigNumber.from(cid.multihash.digest)
+    )
   );
 
-  if (currentAuthorOf.isZero()) {
+  if (currentAuthorOf.zero) {
     const tagOffset = indexOfMulti(blockstore.rootBlock.bytes, tag.toBytes());
     let tx;
 
@@ -184,20 +184,19 @@ async function mint() {
       tx = await talentContract.value.multicall([
         talentContract.value.interface.encodeFunctionData("claim", [
           cid.multihash.digest,
+          props.account.address.value!.toString(),
           blockstore.rootBlock.bytes,
           cid.code,
           tagOffset,
-          props.account.address.value!.toString(),
           royalty.value!,
         ]),
         talentContract.value.interface.encodeFunctionData("mint", [
-          openStoreContract.value!.address,
+          nftFairContract.value!.address,
           cid.multihash.digest,
           editions.value!,
           new ListingConfig(
-            BigNumber.from(0),
-            props.account.address.value!.toString(),
             app.toString(),
+            props.account.address.value!.toString(),
             price.value
           ).encode(),
           finalize.value,

@@ -3,15 +3,10 @@ import {
   Blockstore,
 } from "@fancysofthq/supa-app/services/Web3Storage";
 import { CID } from "multiformats/cid";
-import { encode as encodeBlock, Block } from "multiformats/block";
-import * as raw from "multiformats/codecs/raw";
-import { sha256 } from "multiformats/hashes/sha2";
+import { Block } from "multiformats/block";
 import { toIpfsUri, gatewayize } from "@fancysofthq/supa-app/services/ipfs";
-import * as dagCbor from "@ipld/dag-cbor";
-import * as dagPb from "@ipld/dag-pb";
-import { markRaw, Ref, ref, ShallowRef } from "vue";
+import { markRaw, Ref, ref } from "vue";
 import { Account } from "@fancysofthq/supa-app/models/Account";
-import { nanoid } from "nanoid";
 import * as UnixFS from "@ipld/unixfs";
 import { BigNumber } from "ethers";
 
@@ -41,11 +36,11 @@ export type Metadata = {
 };
 
 export type Chaindata = {
-  createdAt: Date;
+  // createdAt: Date;
   royalty: number;
   finalized: boolean;
   expiredAt: Date;
-  editions: number;
+  editions: BigNumber;
 };
 
 export class Talent implements Blockifiable {

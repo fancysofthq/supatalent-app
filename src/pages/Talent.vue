@@ -93,7 +93,7 @@ onMounted(async () => {
           th.whitespace-nowrap.p-4.px-5 Stock Size
           th.whitespace-nowrap.p-4.px-5.text-right Actions
       tbody.divide-y
-        tr(v-for="listing in listings" :key="listing.id._hex")
+        tr(v-for="listing in listings" :key="listing.id.toString()")
           td.py-2.px-5.text-left
             router-link.hover__underline(:to="'/' + listing.seller.toString()")
               Chip.inline-flex.gap-2.align-middle(
@@ -118,7 +118,7 @@ onMounted(async () => {
     table.w-full.table-auto.rounded-xl.bg-white
       tbody.divide-y
         tr(v-for="event in history")
-          template(v-if="event.type == 'list'")
+          template(v-if="event.type == 'talent_list'")
             td.p-5.text-sm
               router-link.inline-flex.align-baseline.hover__underline(
                 :to="'/' + event.seller.toString()"
@@ -128,23 +128,23 @@ onMounted(async () => {
                   pfp-class="w-5 h-5 self-center bg-base-100 rounded-full"
                 )
               BuildingStorefrontIcon.mx-2.-mt-1.inline-block.h-6.w-6.align-middle.text-base-600
-              span.text-base-500 Listed {{ event.amount }} token(s) for {{ ethers.utils.formatEther(event.price) }} {{ chain.nativeCurrency.symbol }} each
-            td.p-5.text-right.text-sm {{ formatDistance(new Date(event.timestamp * 1000), new Date()) }} ago
+              span.text-base-500 Listed {{ event.stockSize }} token(s) for {{ ethers.utils.formatEther(event.price) }} {{ chain.nativeCurrency.symbol }} each
+            //- td.p-5.text-right.text-sm {{ formatDistance(new Date(event.timestamp * 1000), new Date()) }} ago
 
-          template(v-else-if="event.type == 'mint'")
+          template(v-else-if="event.type == 'talent_mint'")
             td.p-5.text-sm
               router-link.inline-flex.align-baseline.hover__underline(
-                :to="'/' + event.author.toString()"
+                :to="'/' + event.to.toString()"
               )
                 Chip.inline-flex.items-baseline.gap-2(
-                  :account="Account.getOrCreateFromAddress(event.author, true)"
+                  :account="Account.getOrCreateFromAddress(event.operator, true)"
                   pfp-class="w-5 h-5 self-center bg-base-100 rounded-full"
                 )
               SparklesIcon.mx-2.-mt-1.inline-block.h-6.w-6.align-middle.text-base-600
-              span.text-base-500 Minted {{ event.amount }} token(s)
-            td.p-5.text-right.text-sm {{ formatDistance(new Date(event.timestamp * 1000), new Date()) }} ago
+              span.text-base-500 Minted {{ event.value }} token(s)
+            //- td.p-5.text-right.text-sm {{ formatDistance(new Date(event.timestamp * 1000), new Date()) }} ago
 
-          template(v-else-if="event.type == 'purchase'")
+          template(v-else-if="event.type == 'talent_purchase'")
             td.p-5.text-sm
               router-link.inline-flex.align-baseline.hover__underline(
                 :to="'/' + event.buyer.toString()"
@@ -155,10 +155,10 @@ onMounted(async () => {
                 )
               ShoppingBagIcon.mx-2.-mt-1.inline-block.h-6.w-6.align-middle.text-base-600
               span.text-base-500 Purchased {{ event.tokenAmount }} token(s) for {{ ethers.utils.formatEther(event.income) }} {{ chain.nativeCurrency.symbol }}
-            td.p-5.text-right.text-sm {{ formatDistance(new Date(event.timestamp * 1000), new Date()) }} ago
+            //- td.p-5.text-right.text-sm {{ formatDistance(new Date(event.timestamp * 1000), new Date()) }} ago
 
           template(
-            v-else-if="event.type == 'transfer' && event.to.toString().toUpperCase() == notNull(talentContract).address.toUpperCase()"
+            v-else-if="event.type == 'talent_transfer' && event.to.toString().toUpperCase() == notNull(talentContract).address.toUpperCase()"
           )
             td.p-5.text-sm
               router-link.inline-flex.align-baseline.hover__underline(
@@ -170,7 +170,7 @@ onMounted(async () => {
                 )
               TicketIcon.mx-2.-mt-1.inline-block.h-6.w-6.align-middle.text-base-600
               span.text-base-500 Redeemed {{ event.value }} token(s)
-            td.p-5.text-right.text-sm {{ formatDistance(new Date(event.timestamp * 1000), new Date()) }} ago
+            //- td.p-5.text-right.text-sm {{ formatDistance(new Date(event.timestamp * 1000), new Date()) }} ago
 
   PurchaseVue(
     :open="purchaseModal !== undefined"

@@ -3,11 +3,13 @@ import {
   useEth,
 } from "@fancysofthq/supa-app/services/eth";
 import { markRaw, ref, ShallowRef } from "vue";
-import type { IpftRedeemable } from "contracts/IpftRedeemable";
-import { IpftRedeemableFactory } from "contracts/IpftRedeemableFactory";
-import type { OpenStore } from "contracts/OpenStore";
-import { OpenStoreFactory } from "contracts/OpenStoreFactory";
-import { Address } from "@fancysofthq/supa-app/services/eth/Address";
+import {
+  NFTFair,
+  NFTFair__factory,
+  IPNFT1155Redeemable,
+  IPNFT1155Redeemable__factory,
+} from "@fancysofthq/contracts/typechain";
+import { Address } from "@fancysofthq/supa-app/models/Bytes";
 import { ethers, BigNumberish, BytesLike } from "ethers";
 
 export class ListingConfig {
@@ -32,21 +34,22 @@ export const chain: AddEthereumChainParameter = JSON.parse(
   import.meta.env.VITE_CHAIN
 );
 
-export const talentContract: ShallowRef<IpftRedeemable | undefined> = ref();
-export const openStoreContract: ShallowRef<OpenStore | undefined> = ref();
+export const talentContract: ShallowRef<IPNFT1155Redeemable | undefined> =
+  ref();
+export const nftFairContract: ShallowRef<NFTFair | undefined> = ref();
 export const app = new Address(import.meta.env.VITE_APP_ADDRESS);
 
 onConnect(async (provider) => {
   talentContract.value = markRaw(
-    IpftRedeemableFactory.connect(
+    IPNFT1155Redeemable__factory.connect(
       import.meta.env.VITE_TALENT_ADDRESS,
       provider.getSigner()
     )
   );
 
-  openStoreContract.value = markRaw(
-    OpenStoreFactory.connect(
-      import.meta.env.VITE_OPEN_STORE_ADDRESS,
+  nftFairContract.value = markRaw(
+    NFTFair__factory.connect(
+      import.meta.env.VITE_NFTFAIR_ADDRESS,
       provider.getSigner()
     )
   );

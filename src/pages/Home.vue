@@ -33,7 +33,6 @@ onMounted(async () => {
           ),
           undefined,
           {
-            createdAt: talent.createdAt,
             royalty: talent.royalty,
             finalized: talent.finalized,
             expiredAt: talent.expiredAt,

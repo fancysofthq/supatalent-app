@@ -5,16 +5,18 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc && vite build",
-    "vite:preview": "vite preview"
+    "preview": "vite preview"
   },
   "dependencies": {
-    "@fancysofthq/supa-app": "^0.3.0",
+    "@fancysofthq/contracts": "^0.1.0-rc1",
+    "@fancysofthq/supa-app": "^0.4.0-rc1",
     "@headlessui/vue": "^1.7.4",
     "@heroicons/vue": "^2.0.13",
     "@ipld/car": "^5.0.1",
     "@ipld/dag-cbor": "^8.0.0",
     "@ipld/dag-pb": "^3.0.1",
     "@ipld/unixfs": "^2.0.0",
+    "@nxsf/ipnft": "^0.4.0-rc4",
     "@vueuse/components": "^9.6.0",
     "@vueuse/core": "^9.6.0",
     "date-fns": "^2.29.3",
@@ -27,8 +29,6 @@
     "vue3-markdown-it": "^1.0.10"
   },
   "devDependencies": {
-    "@ethersproject/contracts": "^5.7.0",
-    "@ethersproject/providers": "^5.7.2",
     "@prettier/plugin-pug": "^2.3.0",
     "@tailwindcss/forms": "^0.5.3",
     "@tailwindcss/line-clamp": "^0.4.2",
@@ -40,7 +40,6 @@
     "dotenv": "^16.0.3",
     "postcss": "^8.4.19",
     "prettier": "^2.8.0",
-    "prettier-plugin-solidity": "^1.0.0",
     "prettier-plugin-tailwindcss": "^0.2.0",
     "pug": "^3.0.2",
     "sass": "^1.56.1",

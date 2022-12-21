@@ -3,60 +3,8 @@ import * as Web3Auth from "@fancysofthq/supa-app/services/Web3Auth";
 import { useEth } from "@fancysofthq/supa-app/services/eth";
 import { CarReader, CarWriter } from "@ipld/car";
 import { iteratorToBuffer } from "@fancysofthq/supa-app/utils/iterable";
-import { Address } from "@fancysofthq/supa-app/services/eth/Address";
 import { BigNumber } from "ethers";
-
-export type ShortTalentDTO = {
-  cid: string;
-};
-
-export type TalentDTO = {
-  cid: string;
-  createdAt: number; // Timestamp in
-  author: string;
-  royalty: number; // 0-1
-
-  // Dynamic info
-  finalized: boolean;
-  expiredAt: number; // Timestamp in seconds
-  editions: number; // TODO: BigNumber
-};
-
-export type BasicEventDTO = {
-  blockNumber: number;
-  logIndex: number;
-  timestamp: number; // In seconds
-  txHash: string;
-};
-
-export type EventMintDTO = BasicEventDTO & {
-  type: "mint";
-  author: string; // Address
-  amount: string; // BigNumber hex
-};
-
-export type EventListDTO = BasicEventDTO & {
-  type: "list";
-  listingId: string; // BigNumber hex
-  seller: string; // Address
-  amount: string; // BigNumber hex
-  price: string; // BigNumber hex
-};
-
-export type EventPurchaseDTO = BasicEventDTO & {
-  type: "purchase";
-  listingId: string; // BigNumber hex
-  buyer: string; // Address
-  tokenAmount: string; // BigNumber hex
-  income: string; // BigNumber hex
-};
-
-export type EventTransferDTO = BasicEventDTO & {
-  type: "transfer";
-  from: string; // Address
-  to: string; // Address
-  value: string; // BigNumber hex
-};
+import { Address, Bytes, Hash } from "@fancysofthq/supa-app/models/Bytes";
 
 async function jwt(): Promise<string> {
   const { provider, account } = useEth();
@@ -128,12 +76,16 @@ export async function storeTalentCar(
 
 export type Talent = {
   cid: CID;
-  createdAt: Date;
+  claimEvent: {
+    blockNumber: number;
+    logIndex: number;
+    txHash: Hash;
+  };
   author: Address;
   royalty: number;
   finalized: boolean;
   expiredAt: Date;
-  editions: number;
+  editions: BigNumber;
 };
 
 export async function getTalents(from?: Address): Promise<Talent[]> {
@@ -142,12 +94,24 @@ export async function getTalents(from?: Address): Promise<Talent[]> {
   );
   if (from) requestUrl.searchParams.set("from", from.toString());
 
-  const dtos: ShortTalentDTO[] = await (await fetch(requestUrl)).json();
+  const dtos: { cid: string }[] = await (await fetch(requestUrl)).json();
   return Promise.all(dtos.map(async (dto) => getTalent(CID.parse(dto.cid))));
 }
 
 export async function getTalent(cid: CID): Promise<Talent> {
-  const dto: TalentDTO = await (
+  const dto: {
+    cid: string;
+    author: string;
+    claimEvent: {
+      blockNumber: number;
+      logIndex: number;
+      txHash: string;
+    };
+    royalty: number;
+    finalized: boolean;
+    expiredAt: number;
+    editions: string;
+  } = await (
     await fetch(
       new URL(import.meta.env.VITE_API_URL) + "v1/talents/" + cid.toString()
     )
@@ -155,17 +119,21 @@ export async function getTalent(cid: CID): Promise<Talent> {
 
   return {
     cid: CID.parse(dto.cid),
-    createdAt: new Date(dto.createdAt * 1000),
+    claimEvent: {
+      blockNumber: dto.claimEvent.blockNumber,
+      logIndex: dto.claimEvent.logIndex,
+      txHash: new Hash(dto.claimEvent.txHash),
+    },
     author: new Address(dto.author),
     royalty: dto.royalty,
     finalized: dto.finalized,
     expiredAt: new Date(dto.expiredAt * 1000),
-    editions: dto.editions,
+    editions: BigNumber.from(dto.editions),
   };
 }
 
 export type Listing = {
-  id: BigNumber;
+  id: Bytes<32>;
   seller: Address;
   token: {
     contract: Address;
@@ -176,70 +144,52 @@ export type Listing = {
 };
 
 type BaseEvent = {
-  timestamp: number;
-  txHash: string;
+  blockNumber: number;
+  logIndex: number;
+  txHash: Hash;
 };
 
 export type List = BaseEvent & {
-  type: "list";
-  listingId: BigNumber;
+  type: "talent_list";
+  listingId: Bytes<32>;
   seller: Address;
-  amount: BigNumber;
   price: BigNumber;
+  stockSize: BigNumber;
 };
 
 export type Mint = BaseEvent & {
-  type: "mint";
-  author: Address;
-  amount: BigNumber;
+  type: "talent_mint";
+  operator: Address;
+  to: Address;
+  value: BigNumber;
 };
 
 export type Purchase = BaseEvent & {
-  type: "purchase";
-  listingId: BigNumber;
+  type: "talent_purchase";
+  listingId: Bytes<32>;
   buyer: Address;
   tokenAmount: BigNumber;
   income: BigNumber;
 };
 
 export type Transfer = BaseEvent & {
-  type: "transfer";
+  type: "talent_transfer";
   from: Address;
   to: Address;
   value: BigNumber;
 };
 
-export type ShortListingDTO = {
-  id: string;
-};
-
-export type ListingDTO = {
-  id: string; // BigNumber hex
-  seller: string;
-  token: {
-    contract: string;
-    id: string; // BigNumber hex
-  };
-  stockSize: string; // BigNumber hex
-  price: string; // BigNumber hex
-};
-
 export async function getTalentListings(talentCid: CID): Promise<Listing[]> {
   const url = new URL(new URL(import.meta.env.VITE_API_URL) + "v1/listings");
   url.searchParams.set("talentCid", talentCid.toString());
-  const dtos: ShortListingDTO[] = await (await fetch(url)).json();
-  return Promise.all(dtos.map((dto) => getListing(BigNumber.from(dto.id))));
+  const dtos: { id: string }[] = await (await fetch(url)).json();
+  return Promise.all(dtos.map((dto) => getListing(new Bytes<32>(dto.id))));
 }
 
 export async function getTalentHistory(
   talentCid: CID
 ): Promise<(List | Mint | Purchase | Transfer)[]> {
-  const dtos: (
-    | EventListDTO
-    | EventMintDTO
-    | EventPurchaseDTO
-    | EventTransferDTO
-  )[] = await (
+  const dtos = await (
     await fetch(
       new URL(import.meta.env.VITE_API_URL) +
         "v1/talents/" +
@@ -248,51 +198,58 @@ export async function getTalentHistory(
     )
   ).json();
 
-  return dtos.map((dto) => {
+  return dtos.map((dto: any): List | Mint | Purchase | Transfer => {
     switch (dto.type) {
-      case "list":
+      case "talent_list":
         return {
-          type: "list",
-          timestamp: dto.timestamp,
+          blockNumber: dto.blockNumber,
+          logIndex: dto.logIndex,
           txHash: dto.txHash,
-          listingId: BigNumber.from(dto.listingId),
+          type: "talent_list",
+          listingId: new Bytes<32>(dto.listingId),
           seller: new Address(dto.seller),
-          amount: BigNumber.from(dto.amount),
           price: BigNumber.from(dto.price),
+          stockSize: BigNumber.from(dto.stockSize),
         };
-      case "mint":
+      case "talent_mint":
         return {
-          type: "mint",
-          timestamp: dto.timestamp,
+          blockNumber: dto.blockNumber,
+          logIndex: dto.logIndex,
           txHash: dto.txHash,
-          author: new Address(dto.author),
-          amount: BigNumber.from(dto.amount),
+          type: "talent_mint",
+          operator: new Address(dto.operator),
+          to: new Address(dto.to),
+          value: BigNumber.from(dto.value),
         };
-      case "purchase":
+      case "talent_purchase":
         return {
-          type: "purchase",
-          timestamp: dto.timestamp,
+          blockNumber: dto.blockNumber,
+          logIndex: dto.logIndex,
           txHash: dto.txHash,
-          listingId: BigNumber.from(dto.listingId),
+          type: "talent_purchase",
+          listingId: new Bytes<32>(dto.listingId),
           buyer: new Address(dto.buyer),
           tokenAmount: BigNumber.from(dto.tokenAmount),
           income: BigNumber.from(dto.income),
         };
-      case "transfer":
+      case "talent_transfer":
         return {
-          type: "transfer",
-          timestamp: dto.timestamp,
+          blockNumber: dto.blockNumber,
+          logIndex: dto.logIndex,
           txHash: dto.txHash,
+          type: "talent_transfer",
           from: new Address(dto.from),
           to: new Address(dto.to),
           value: BigNumber.from(dto.value),
         };
+      default:
+        throw new Error("Unknown event type");
     }
   });
 }
 
-export async function getListing(listingId: BigNumber): Promise<Listing> {
-  const dto: ListingDTO = await (
+export async function getListing(listingId: Bytes<32>): Promise<Listing> {
+  const dto = await (
     await fetch(
       new URL(import.meta.env.VITE_API_URL) +
         "v1/listings/" +
@@ -301,7 +258,7 @@ export async function getListing(listingId: BigNumber): Promise<Listing> {
   ).json();
 
   return {
-    id: BigNumber.from(dto.id),
+    id: new Bytes<32>(dto.id),
     seller: new Address(dto.seller),
     token: {
       contract: new Address(dto.token.contract),
@@ -330,7 +287,7 @@ export async function getAccountTalentBalance(
 export async function accountActivity(
   account: Address
 ): Promise<(List | Purchase | Transfer)[]> {
-  const dtos: (EventListDTO | EventPurchaseDTO | EventTransferDTO)[] = await (
+  const dtos = await (
     await fetch(
       new URL(import.meta.env.VITE_API_URL) +
         "v1/accounts/" +
@@ -339,37 +296,42 @@ export async function accountActivity(
     )
   ).json();
 
-  return dtos.map((dto) => {
+  return dtos.map((dto: any): List | Purchase | Transfer => {
     switch (dto.type) {
-      case "list":
+      case "talent_list":
         return {
-          type: "list",
-          timestamp: dto.timestamp,
+          blockNumber: dto.blockNumber,
+          logIndex: dto.logIndex,
           txHash: dto.txHash,
-          listingId: BigNumber.from(dto.listingId),
+          type: "talent_list",
+          listingId: new Bytes<32>(dto.listingId),
           seller: new Address(dto.seller),
-          amount: BigNumber.from(dto.amount),
           price: BigNumber.from(dto.price),
+          stockSize: BigNumber.from(dto.stockSize),
         };
-      case "purchase":
+      case "talent_purchase":
         return {
-          type: "purchase",
-          timestamp: dto.timestamp,
+          blockNumber: dto.blockNumber,
+          logIndex: dto.logIndex,
           txHash: dto.txHash,
-          listingId: BigNumber.from(dto.listingId),
-          buyer: new Address(dto.buyer),
+          type: "talent_purchase",
+          listingId: new Bytes<32>(dto.listingId),
+          buyer: account,
           tokenAmount: BigNumber.from(dto.tokenAmount),
           income: BigNumber.from(dto.income),
         };
-      case "transfer":
+      case "talent_transfer":
         return {
-          type: "transfer",
-          timestamp: dto.timestamp,
+          blockNumber: dto.blockNumber,
+          logIndex: dto.logIndex,
           txHash: dto.txHash,
+          type: "talent_transfer",
           from: new Address(dto.from),
           to: new Address(dto.to),
           value: BigNumber.from(dto.value),
         };
+      default:
+        throw new Error("Unknown event type");
     }
   });
 }
