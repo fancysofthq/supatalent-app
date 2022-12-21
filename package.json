@@ -1,7 +1,7 @@
 {
   "name": "@fancysofthq/supatalent-app",
   "private": true,
-  "version": "0.2.0-rc1",
+  "version": "0.2.0-rc2",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc && vite build",
