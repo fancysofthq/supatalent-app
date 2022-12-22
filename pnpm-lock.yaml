@@ -2,9 +2,9 @@ lockfileVersion: 5.4
 
 specifiers:
   '@fancysoft/contracts': ^0.1.0
-  '@fancysofthq/supa-app': 0.5.0-rc1
+  '@fancysofthq/supa-app': ^0.5.0
   '@fancysofthq/supabase': ^0.4.0
-  '@fancysofthq/supatalent-api': 0.3.0-rc2
+  '@fancysofthq/supatalent-api': ^0.3.0
   '@headlessui/vue': ^1.7.4
   '@heroicons/vue': ^2.0.13
   '@ipld/car': ^5.0.1
@@ -44,9 +44,9 @@ specifiers:
 
 dependencies:
   '@fancysoft/contracts': 0.1.0
-  '@fancysofthq/supa-app': 0.5.0-rc1
+  '@fancysofthq/supa-app': 0.5.0
   '@fancysofthq/supabase': 0.4.0
-  '@fancysofthq/supatalent-api': 0.3.0-rc2
+  '@fancysofthq/supatalent-api': 0.3.2
   '@headlessui/vue': 1.7.6_vue@3.2.45
   '@heroicons/vue': 2.0.13_vue@3.2.45
   '@ipld/car': 5.0.1
@@ -460,8 +460,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@fancysofthq/supa-app/0.5.0-rc1:
-    resolution: {integrity: sha512-OLtS6EAKytib5PyTeMRzt10q05cZlKfYRo+I1cL3PthQ5Bg7E33pxPa6S0gvz0ZAD6vPlCrP/ZUuHz1L7C8GHA==, tarball: download/@fancysofthq/supa-app/0.5.0-rc1/186a136e928b6aa9aa6257e53efd9f58cb114186}
+  /@fancysofthq/supa-app/0.5.0:
+    resolution: {integrity: sha512-pxg3517c25lJEfo76FcdUUXJ3oHHcKYqAUqmgzd+0ER0UQ67HQnWAcJmRhDYKKyYqR5O8Z7uCW3Ja7wxejWmjg==, tarball: download/@fancysofthq/supa-app/0.5.0/447e4f10d0744f0cf30d7c49b6afaefb641d16f2}
     dependencies:
       '@ethersproject/contracts': 5.7.0
       '@ethersproject/providers': 5.7.2
@@ -495,14 +495,19 @@ packages:
     engines: {node: ^18.0, npm: ^8.0}
     dev: false
 
-  /@fancysofthq/supatalent-api/0.3.0-rc2:
-    resolution: {integrity: sha512-zAfk6Uwj6XaIS5EJdJY0vRK2Myry10/+Xb7fFXQ2aDR66psF92ueKEF5fvK9X9g1kc9fM+HGwZZuj9Iij8e2gw==, tarball: download/@fancysofthq/supatalent-api/0.3.0-rc2/7b57db468fbd24588f7d65a552174fc6467f896d}
+  /@fancysofthq/supabase/0.4.1-rc1:
+    resolution: {integrity: sha512-TB4e8MZqmxpqpm8+YRkRbFp0drYoi0N+7D8ymFTXlAuSM94tQLigyOApCWmdfMd18aE1ebYjDoWQqPnkqFfftA==, tarball: download/@fancysofthq/supabase/0.4.1-rc1/a7f675949323470a256812813bb83d488cd6ef7d}
+    engines: {node: ^18.0, npm: ^8.0}
+    dev: false
+
+  /@fancysofthq/supatalent-api/0.3.2:
+    resolution: {integrity: sha512-St3EPPDGlHHuqFnNwvhN81XXe3UwVnHiStFTfAZtdU50bFD+vF5s+sA7Myc30AfsarBe8iKmSC7vlnVI29B4TA==, tarball: download/@fancysofthq/supatalent-api/0.3.2/9b3b1b93c1fd0534d7a754cb1f4d0479c5a62ff4}
     engines: {node: ^18.0, npm: ^8.0}
     dependencies:
       '@ethersproject/contracts': 5.7.0
       '@ethersproject/providers': 5.7.2
       '@fancysoft/contracts': 0.1.0
-      '@fancysofthq/supabase': 0.4.0
+      '@fancysofthq/supabase': 0.4.1-rc1
       '@koa/cors': 3.4.3
       '@koa/router': 10.1.1
       '@multiformats/sha3': 2.0.14
