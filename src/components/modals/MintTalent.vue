@@ -24,7 +24,7 @@ import TalentVue from "@/components/Talent.vue";
 import { packIpnft } from "@fancysofthq/supa-app/services/Web3Storage";
 import { IPFT } from "@nxsf/ipnft";
 import { useEth } from "@fancysofthq/supa-app/services/eth";
-import { Address } from "@fancysofthq/supa-app/models/Bytes";
+import { Address } from "@fancysofthq/supabase";
 import { indexOfMulti, Uint8 } from "@fancysofthq/supa-app/utils/uint8";
 import Spinner from "@fancysofthq/supa-app/components/Spinner.vue";
 import * as api from "@/services/api";
@@ -161,7 +161,7 @@ async function mint() {
 
   const tag = new IPFT(
     (await provider.value!.getNetwork()).chainId,
-    new Address(talentContract.value!.address).toString(),
+    Address.from(talentContract.value!.address).toString(),
     props.account.address.value!.toString()
   );
 
@@ -170,7 +170,7 @@ async function mint() {
   talentCid.value = cid;
   console.debug("Root CID", cid.toString());
 
-  const currentAuthorOf = new Address(
+  const currentAuthorOf = Address.from(
     await talentContract.value.contentAuthorOf(
       BigNumber.from(cid.multihash.digest)
     )
@@ -216,6 +216,7 @@ async function mint() {
     txConfirmation.value = Status.InProgress;
 
     try {
+      // TODO: Fix for preview.
       await tx.wait(import.meta.env.PROD ? 2 : 1);
       txConfirmation.value = Status.Complete;
     } catch (e) {

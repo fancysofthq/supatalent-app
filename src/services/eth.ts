@@ -9,7 +9,7 @@ import {
   IPNFT1155Redeemable,
   IPNFT1155Redeemable__factory,
 } from "@fancysoft/contracts/typechain";
-import { Address } from "@fancysofthq/supa-app/models/Bytes";
+import { Address } from "@fancysofthq/supabase";
 import { ethers, BigNumberish, BytesLike } from "ethers";
 
 export class ListingConfig {
@@ -37,7 +37,7 @@ export const chain: AddEthereumChainParameter = JSON.parse(
 export const talentContract: ShallowRef<IPNFT1155Redeemable | undefined> =
   ref();
 export const nftFairContract: ShallowRef<NFTFair | undefined> = ref();
-export const app = new Address(import.meta.env.VITE_APP_ADDRESS);
+export const app = Address.from(import.meta.env.VITE_APP_ADDRESS);
 
 onConnect(async (provider) => {
   talentContract.value = markRaw(

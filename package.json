@@ -9,7 +9,9 @@
   },
   "dependencies": {
     "@fancysoft/contracts": "^0.1.0",
-    "@fancysofthq/supa-app": "^0.4.0",
+    "@fancysofthq/supa-app": "0.5.0-rc1",
+    "@fancysofthq/supabase": "^0.4.0",
+    "@fancysofthq/supatalent-api": "0.3.0-rc2",
     "@headlessui/vue": "^1.7.4",
     "@heroicons/vue": "^2.0.13",
     "@ipld/car": "^5.0.1",

@@ -19,16 +19,19 @@ onMounted(async () => {
     (
       await api.getTalents()
     ).map(async (talent) => {
+      console.debug(talent.author);
       talents.value.push(
         Talent.getOrCreate(
           talent.cid,
           Account.getOrCreateFromAddress(talent.author, true),
           ref(
             account.value
-              ? await api.getAccountTalentBalance(
-                  account.value.address.value!,
-                  talent.cid
-                )
+              ? (
+                  await api.getAccountTalentBalance(
+                    account.value.address.value!,
+                    talent.cid
+                  )
+                ).balance
               : BigNumber.from(0)
           ),
           undefined,

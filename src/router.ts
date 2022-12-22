@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import { CID } from "multiformats/cid";
 import { Account } from "@fancysofthq/supa-app/models/Account";
+import { Address } from "@fancysofthq/supabase";
 
 const Home = () => import("./pages/Home.vue");
 const Talent = () => import("./pages/Talent.vue");
@@ -38,7 +39,7 @@ const router = createRouter({
         } else {
           return {
             profileAccount: Account.getOrCreateFromAddress(
-              route.params.name as string
+              Address.from(route.params.name as string)
             ),
             displayTitle: true,
             displayActivity: false,

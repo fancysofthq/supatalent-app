@@ -10,6 +10,7 @@ import { notNull } from "@fancysofthq/supa-app/utils/aux";
 import { computed, onMounted, ref, type ShallowRef } from "vue";
 import * as api from "@/services/api";
 import PFP from "@fancysofthq/supa-app/components/PFP.vue";
+import { Event as APIEvent } from "@fancysofthq/supatalent-api/server";
 import { useEth } from "@fancysofthq/supa-app/services/eth";
 import nProgress from "nprogress";
 import { Talent } from "@/models/Talent";
@@ -26,9 +27,7 @@ const props = defineProps<{
 const emit = defineEmits(["exit"]);
 
 const talents: ShallowRef<Talent[]> = ref([]);
-const activity: ShallowRef<(api.List | api.Purchase | api.Transfer)[]> = ref(
-  []
-);
+const activity: ShallowRef<APIEvent[]> = ref([]);
 
 const isSelf = computed(() =>
   connectedAccount.value?.address.value?.equals(
@@ -46,7 +45,7 @@ onMounted(async () => {
       Talent.getOrCreate(
         dto.cid,
         Account.getOrCreateFromAddress(dto.author, true),
-        ref(await api.getAccountTalentBalance(dto.author, dto.cid)),
+        ref((await api.getAccountTalentBalance(dto.author, dto.cid)).balance),
         undefined,
         dto,
         true
@@ -112,6 +111,7 @@ onMounted(async () => {
       TalentVue.gap-3.rounded-lg.bg-white.p-4.transition(
         v-for="talent in talents"
         :talent="talent"
+        :display-details="true"
         @visit="emit('exit')"
       )
   p.text-center.text-base-400(v-else) {{  isSelf ? "You haven't minted any talents yet." : "This account doesn't have any talents."  }}

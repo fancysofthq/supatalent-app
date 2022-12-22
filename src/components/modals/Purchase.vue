@@ -5,7 +5,7 @@ import CommonVue from "./Common.vue";
 import { ethers } from "ethers";
 import { computed, type Ref, ref } from "vue";
 import { chain } from "@/services/eth";
-import { type Listing } from "@/services/api";
+import { type Listing } from "@fancysofthq/supatalent-api/server";
 import Spinner from "@fancysofthq/supa-app/components/Spinner.vue";
 import { nftFairContract } from "@/services/eth";
 import { useEth } from "@fancysofthq/supa-app/services/eth";

@@ -19,20 +19,26 @@ import {
 import { chain, talentContract } from "@/services/eth";
 import PurchaseVue from "@/components/modals/Purchase.vue";
 import { formatDistance } from "date-fns";
+import {
+  Event as APIEvent,
+  Listing,
+  ListEvent,
+  PurchaseEvent,
+  TransferEvent,
+} from "@fancysofthq/supatalent-api/server";
 import RedeemVue from "@/components/modals/Redeem.vue";
 import { notNull } from "@fancysofthq/supa-app/utils/aux";
 import { useEth } from "@fancysofthq/supa-app/services/eth";
+import { Address, Bytes } from "@fancysofthq/supabase";
 
 const { account } = useEth();
 
 const props = defineProps<{ cid: CID }>();
 const talent: ShallowRef<Talent | undefined> = ref();
-const listings: ShallowRef<api.Listing[]> = ref([]);
-const history: ShallowRef<
-  (api.List | api.Mint | api.Purchase | api.Transfer)[]
-> = ref([]);
+const listings: ShallowRef<Listing[]> = ref([]);
+const history: ShallowRef<APIEvent[]> = ref([]);
 
-const purchaseModal: Ref<api.Listing | undefined> = ref();
+const purchaseModal: Ref<Listing | undefined> = ref();
 const redeemModal = ref(false);
 
 onMounted(async () => {
@@ -43,10 +49,12 @@ onMounted(async () => {
         Account.getOrCreateFromAddress(dto.author, true),
         account.value
           ? ref(
-              await api.getAccountTalentBalance(
-                account.value.address.value!,
-                dto.cid
-              )
+              (
+                await api.getAccountTalentBalance(
+                  account.value.address.value!,
+                  dto.cid
+                )
+              ).balance
             )
           : undefined,
         undefined,
@@ -118,7 +126,7 @@ onMounted(async () => {
     table.w-full.table-auto.rounded-xl.bg-white
       tbody.divide-y
         tr(v-for="event in history")
-          template(v-if="event.type == 'talent_list'")
+          template(v-if="event instanceof ListEvent && true")
             td.p-5.text-sm
               router-link.inline-flex.align-baseline.hover__underline(
                 :to="'/' + event.seller.toString()"
@@ -131,7 +139,9 @@ onMounted(async () => {
               span.text-base-500 Listed {{ event.stockSize }} token(s) for {{ ethers.utils.formatEther(event.price) }} {{ chain.nativeCurrency.symbol }} each
             //- td.p-5.text-right.text-sm {{ formatDistance(new Date(event.timestamp * 1000), new Date()) }} ago
 
-          template(v-else-if="event.type == 'talent_mint'")
+          template(
+            v-else-if="event instanceof TransferEvent && event.from.zero"
+          )
             td.p-5.text-sm
               router-link.inline-flex.align-baseline.hover__underline(
                 :to="'/' + event.to.toString()"
@@ -144,7 +154,7 @@ onMounted(async () => {
               span.text-base-500 Minted {{ event.value }} token(s)
             //- td.p-5.text-right.text-sm {{ formatDistance(new Date(event.timestamp * 1000), new Date()) }} ago
 
-          template(v-else-if="event.type == 'talent_purchase'")
+          template(v-else-if="event instanceof PurchaseEvent && true")
             td.p-5.text-sm
               router-link.inline-flex.align-baseline.hover__underline(
                 :to="'/' + event.buyer.toString()"
@@ -157,8 +167,9 @@ onMounted(async () => {
               span.text-base-500 Purchased {{ event.tokenAmount }} token(s) for {{ ethers.utils.formatEther(event.income) }} {{ chain.nativeCurrency.symbol }}
             //- td.p-5.text-right.text-sm {{ formatDistance(new Date(event.timestamp * 1000), new Date()) }} ago
 
+          //- TODO: Use .equals.
           template(
-            v-else-if="event.type == 'talent_transfer' && event.to.toString().toUpperCase() == notNull(talentContract).address.toUpperCase()"
+            v-else-if="event instanceof TransferEvent && event.to.toString().toUpperCase() == notNull(talentContract).address.toUpperCase()"
           )
             td.p-5.text-sm
               router-link.inline-flex.align-baseline.hover__underline(
