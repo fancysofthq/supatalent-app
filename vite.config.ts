@@ -7,7 +7,6 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.join(__dirname, "src"),
-      contracts: path.join(__dirname, "contracts"),
     },
     // To allow importing `.d.ts` files.
     extensions: [
@@ -20,6 +19,10 @@ export default defineConfig({
       ".json",
       ".d.ts",
     ],
+    preserveSymlinks: true,
+  },
+  optimizeDeps: {
+    include: ["bn.js", "js-sha3", "hash.js", "aes-js", "scrypt-js", "bech32"],
   },
   plugins: [vue()],
 });
