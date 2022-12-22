@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 <svg width="512" height="512" version="1.1" viewBox="0 0 135.47 135.47" xmlns="http://www.w3.org/2000/svg">
- <text x="9.4826641" y="135.46666" fill="#000000" font-family="Montserrat" font-size="193.52px" font-weight="bold" stroke-width="16.127" xml:space="preserve"><tspan x="9.4826641" y="135.46666" stroke-width="16.127"><tspan font-family="Montserrat" font-weight="600" stroke-width="16.127">T</tspan></tspan></text>
+ <g stroke-width="16.127" aria-label="T">
+  <path d="m53.606 135.47v-109.92h-43.349v-25.545h118.05v25.545h-43.349v109.92z"/>
+ </g>
 </svg>
