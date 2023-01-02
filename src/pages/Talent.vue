@@ -27,7 +27,6 @@ import {
   TransferEvent,
 } from "@fancysofthq/supatalent-api/server";
 import RedeemVue from "@/components/modals/Redeem.vue";
-import { notNull } from "@fancysofthq/supa-app/utils/aux";
 import { useEth } from "@fancysofthq/supa-app/services/eth";
 import { Address, Bytes } from "@fancysofthq/supabase";
 
@@ -40,6 +39,7 @@ const history: ShallowRef<APIEvent[]> = ref([]);
 
 const purchaseModal: Ref<Listing | undefined> = ref();
 const redeemModal = ref(false);
+const talentAddress = import.meta.env.VITE_TALENT_ADDRESS.toUpperCase();
 
 onMounted(async () => {
   await Promise.all([
@@ -169,7 +169,7 @@ onMounted(async () => {
 
           //- TODO: Use .equals.
           template(
-            v-else-if="event instanceof TransferEvent && event.to.toString().toUpperCase() == notNull(talentContract).address.toUpperCase()"
+            v-else-if="event instanceof TransferEvent && event.to.toString().toUpperCase() == talentAddress"
           )
             td.p-5.text-sm
               router-link.inline-flex.align-baseline.hover__underline(

@@ -86,8 +86,9 @@ onMounted(async () => {
             class="bg-black/10 hover__bg-black/20"
           ) {{ profileAccount.address.value?.toDisplayString() }}
         button.rounded-lg.p-2.transition.active__scale-95(
+          v-if="props.profileAccount.address.value"
           class="hover__bg-black/20"
-          @click="copy(notNull(profileAccount.address.value).toString())"
+          @click="copy(notNull(props.profileAccount.address.value).toString())"
         )
           DocumentDuplicateIcon.h-6.w-6.text-white(v-if="!copied")
           ClipboardDocumentCheckIcon.h-6.w-6.text-white(v-else)
